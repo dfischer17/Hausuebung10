@@ -18,13 +18,13 @@ import org.jsoup.select.Elements;
  *
  * @author dfischer17
  */
-public class Beispiel1 {
+public class Serial {
 
-    private static String pwd0 = "95511ec2b03a441daada2e54cad5a8a7ae990e99b4a9f3512b92f672467186b2";
-    private static String pwd1 = "6cd2017cdafb4b2d6412eb50c7a8e457dac6e5c5a5a528d03231462e5d774589";
-    private static String pwd2 = "a8d6f454f4b4ff90aef14abe614f61eede264190e088dee0995e17434d1dc2bf";
-    private static String pwd3 = "520da0807c1e972fb9a862485009d47ad1c4978db1369652f5ae176085eb9df7";
-    private static List<Character> all = new ArrayList<>();
+    static String pwd0 = "95511ec2b03a441daada2e54cad5a8a7ae990e99b4a9f3512b92f672467186b2";
+    static String pwd1 = "6cd2017cdafb4b2d6412eb50c7a8e457dac6e5c5a5a528d03231462e5d774589";
+    static String pwd2 = "a8d6f454f4b4ff90aef14abe614f61eede264190e088dee0995e17434d1dc2bf";
+    static String pwd3 = "520da0807c1e972fb9a862485009d47ad1c4978db1369652f5ae176085eb9df7";
+    static List<Character> all = new ArrayList<>();
 
     /**
      * @param args the command line arguments
@@ -139,7 +139,7 @@ public class Beispiel1 {
                 }
             }
         } catch (IOException ex) {
-            Logger.getLogger(Beispiel1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Serial.class.getName()).log(Level.SEVERE, null, ex);
         }
         return "falsch";
     }
