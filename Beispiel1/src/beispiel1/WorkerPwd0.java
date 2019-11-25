@@ -12,12 +12,12 @@ import java.util.concurrent.Callable;
  *
  * @author Daniel Fischer
  */
-public class Worker implements Callable<String> {
+public class WorkerPwd0 implements Callable<String> {
 
     private List<String> possiblePasswords;
     private String searchedPassword;
 
-    public Worker(List<String> possiblePasswords, String searchedPassword) {
+    public WorkerPwd0(List<String> possiblePasswords, String searchedPassword) {
         this.possiblePasswords = possiblePasswords;
         this.searchedPassword = searchedPassword;
     }

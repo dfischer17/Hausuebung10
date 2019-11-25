@@ -22,9 +22,9 @@ import java.util.logging.Logger;
 public class Parallel extends Serial {
 
     public static void main(String[] args) {
-        //crackLowserCasePassword(4);
-        //crackUpperCasePassword(4);
-        crackLowerAndUpperCasePassword(2);
+        //crackLowserCasePassword(4); // 1s
+        //crackUpperCasePassword(4); // 2 min 48s
+        crackLowerAndUpperCasePassword(4);
     }
 
     private static void crackLowserCasePassword(int amountOfThreads) {
@@ -37,9 +37,9 @@ public class Parallel extends Serial {
 
         for (int i = 0; i < possiblePasswords.size() - interval; i += interval) {
             if (possiblePasswords.size() - (i + interval) < 1) {
-                callables.add(new Worker(possiblePasswords.subList(i, i + possiblePasswords.size()), pwd0));
+                callables.add(new WorkerPwd0(possiblePasswords.subList(i, i + possiblePasswords.size()), pwd0));
             }
-            callables.add(new Worker(possiblePasswords.subList(i, i + interval), pwd0));
+            callables.add(new WorkerPwd0(possiblePasswords.subList(i, i + interval), pwd0));
         }
 
         // Liste der Callables mit ExecutorService ausfuehren
@@ -69,85 +69,73 @@ public class Parallel extends Serial {
     }
 
     private static void crackUpperCasePassword(int amountOfThreads) {
-        List<String> possiblePasswords = createUpperCasePasswordList();
-
-        int interval = possiblePasswords.size() / amountOfThreads;
-
-        // Moegliche Passwoerter auf Callables aufteilen
-        List<Callable<String>> callables = new ArrayList<>();
-
-        for (int i = 0; i < possiblePasswords.size() - interval; i += interval) {
-            if (possiblePasswords.size() - (i + interval) < 1) {
-                callables.add(new Worker(possiblePasswords.subList(i, i + possiblePasswords.size()), pwd1));
-            }
-            callables.add(new Worker(possiblePasswords.subList(i, i + interval), pwd1));
-        }
-
-        // Liste der Callables mit ExecutorService ausfuehren
         ExecutorService executor = Executors.newFixedThreadPool(amountOfThreads);
+        List<Callable<String>> workers = new ArrayList<>();
         List<Future<String>> results = new ArrayList<>();
 
+        // weise die 25 moeglichen Kombinationen der ersten Stelle an 5 Callables
+        for (int i = 65; i <= 90; i += 6) {
+            workers.add(new WorkerPwd1(i, i + 5));
+        }
+
         try {
-            results = executor.invokeAll(callables);
+            // fuehre Workers mit ExecutorService aus und speichere Ergebnisse in result List
+            results = executor.invokeAll(workers);
         } catch (InterruptedException ex) {
             Logger.getLogger(Parallel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Passwort (not null) ausgeben
-        for (Future<String> result : results) {
-            String temp;
+        // richtiges Ergebnis (nicht null) ausgeben
+        results.forEach(r -> {
             try {
-                temp = result.get();
+                String temp;
+                temp = r.get();
+
                 if (temp != null) {
-                    System.out.println("Passwort: " + temp);
+                    System.out.println("Passwort:" + temp);
                 }
 
-                executor.shutdown();
             } catch (InterruptedException | ExecutionException ex) {
                 Logger.getLogger(Parallel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        });
+
+        executor.shutdown();
     }
 
     private static void crackLowerAndUpperCasePassword(int amountOfThreads) {
-        List<String> possiblePasswords = createLowerAndUpperCasePasswordList();
-
-        int interval = possiblePasswords.size() / amountOfThreads;
-
-        // Moegliche Passwoerter auf Callables aufteilen
-        List<Callable<String>> callables = new ArrayList<>();
-
-        for (int i = 0; i < possiblePasswords.size() - interval; i += interval) {
-            if (possiblePasswords.size() - (i + interval) < 1) {
-                callables.add(new Worker(possiblePasswords.subList(i, i + possiblePasswords.size()), pwd2));
-            }
-            callables.add(new Worker(possiblePasswords.subList(i, i + interval), pwd2));
-        }
-
-        // Liste der Callables mit ExecutorService ausfuehren
         ExecutorService executor = Executors.newFixedThreadPool(amountOfThreads);
+        List<Callable<String>> workers = new ArrayList<>();
         List<Future<String>> results = new ArrayList<>();
 
+        // weise die 59 moeglichen Kombinationen der ersten Stelle an 3 Callables
+        for (int i = 0; i <= 59; i += 19) {
+            workers.add(new WorkerPwd2(i, i + 19));
+        }
+
         try {
-            results = executor.invokeAll(callables);
+            // fuehre Workers mit ExecutorService aus und speichere Ergebnisse in result List
+            results = executor.invokeAll(workers);
         } catch (InterruptedException ex) {
             Logger.getLogger(Parallel.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // Passwort (not null) ausgeben
-        for (Future<String> result : results) {
-            String temp;
+        // richtiges Ergebnis (nicht null) ausgeben
+        results.forEach(r -> {
             try {
-                temp = result.get();
+                String temp;
+                temp = r.get();
+
                 if (temp != null) {
-                    System.out.println("Passwort: " + temp);
+                    System.out.println("Passwort:" + temp);
                 }
 
-                executor.shutdown();
             } catch (InterruptedException | ExecutionException ex) {
                 Logger.getLogger(Parallel.class.getName()).log(Level.SEVERE, null, ex);
             }
-        }
+        });
+
+        executor.shutdown();
     }
 
     private static List<String> createLowerCasePasswordList() {

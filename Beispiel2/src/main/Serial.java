@@ -23,7 +23,7 @@ public class Serial {
      * @param args the command line arguments
      */
     public static void main(String[] args) throws IOException {
-        String fileName = "numbers3";
+        String fileName = "numbers1";
         List<String> lines;
         int subArraySize = 0;
         List<Integer> allNumbers = new ArrayList<>();
